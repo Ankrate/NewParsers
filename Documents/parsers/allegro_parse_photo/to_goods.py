@@ -43,7 +43,8 @@ def parse_goods(url):
 
 
 
-parse_goods("https://allegro.pl/listing?string=" + "504043884")
+#parse_goods("https://allegro.pl/listing?string=" + "504043884")
+parse_goods("https://allegro.pl/listing?string=" + "504183759")
 # rows = takeid()
 # for links in rows:
 #     parse_goods(links[0])
