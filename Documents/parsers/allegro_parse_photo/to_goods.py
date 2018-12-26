@@ -15,7 +15,7 @@ import re
 def takeid():
     connection = sqlite3.connect("/home/user500/allegro_photo.db")
     cur = connection.cursor()
-    todbZapros = ("SELECT article FROM articles_of_parts LIMIT 1")
+    todbZapros = ("SELECT article FROM articles_of_parts")
     cur.execute(todbZapros)
     rows = cur.fetchall()
     connection.commit()
@@ -23,42 +23,90 @@ def takeid():
 
 
 def todb(article,img,description):
-    connection = sqlite3.connect("/home/user500/allegro_50.db")
+    connection = sqlite3.connect("/home/user500/allegro_51.db")
     cur = connection.cursor()
     todbValue = (article,img,description)
     query = ("INSERT INTO main(article,img,description) VALUES (?,?,?)")
     cur.execute(query,todbValue)
     connection.commit()
 
+
+# def parse_links_tor(article):
+#     try:
+#         html = requests.get("https://allegro.pl/listing?string=" + article).content
+#         soup = BeautifulSoup(html, "lxml")
+#         try:
+#             checkCount = soup.find('section', 'cb528e8')
+#             check = checkCount.find('a')
+#             table = soup.findAll('article', {'data-item': 'true'})
+#             for strokazap in table:
+#                 urls = strokazap.findAll('a')
+#                 pageUrl = urls[0]['href']
+#                 parse_page(article, pageUrl)
+#         except AttributeError:
+#             parse_page_tor(article, 'product not found')
+#
+#     except ConnectionError:
+#         time.sleep(60)
+#         parse_links_tor(article)
+
+
 def parse_links(article):
-    #html = requests.get(url).content
-    html = urlopen("https://allegro.pl/listing?string=" + article)
-    soup = BeautifulSoup(html, "lxml")
-
-    table = soup.findAll('article', {'data-item':'true'})
-    for strokazap in table:
-        urls = strokazap.findAll('a')
-        pageUrl = urls[0]['href']
-
-        parse_page(article,pageUrl)
+    try:
+        html = urlopen("https://allegro.pl/listing?string=" + article)
+        soup = BeautifulSoup(html, "lxml")
+        try:
+            checkCount = soup.find('section', 'cb528e8')
+            check = checkCount.find('a')
+            table = soup.findAll('article', {'data-item': 'true'})
+            for strokazap in table:
+                urls = strokazap.findAll('a')
+                pageUrl = urls[0]['href']
+                parse_page(article, pageUrl)
+        except AttributeError:
+            parse_page(article,'product not found')
+    except ConnectionError:
+        time.sleep(60)
+        parse_links(article)
 
 
 
 def parse_page(article,pageUrl):
-    html = urlopen(pageUrl)
-    soup = BeautifulSoup(html, "lxml")
+    if pageUrl == 'product not found':
+        todb(article,'NULL','NULL')
+    else:
+        try:
+            html = urlopen(pageUrl)
+            soup = BeautifulSoup(html, "lxml")
+            photoLink = soup.find('meta',{'itemprop':'image'})
+            description = str(soup.find('div', 'description'))
+            img = photoLink['content']
+            todb(article,img,description)
+        except:
+            todb(article,'NULL','NULL')
 
-    photoLink = soup.find('meta',{'itemprop':'image'})
-    description = str(soup.find('div', 'description'))
-    img = photoLink['content']
-    todb(article,img,description)
 
 
-#parse_page('https://allegro.pl/oferta/wahacz-delphi-citroen-jumper-7195753988')
-#parse_goods("https://allegro.pl/listing?string=" + "504183759")
+# def parse_page_tor(article,pageUrl):
+#     if pageUrl == 'product not found':
+#         todb(article,'NULL','NULL')
+#     else:
+#         try:
+#             html = requests.get(pageUrl).content
+#             soup = BeautifulSoup(html, "lxml")
+#
+#             photoLink = soup.find('meta',{'itemprop':'image'})
+#             description = str(soup.find('div', 'description'))
+#             img = photoLink['content']
+#             todb(article,img,description)
+#         except AttributeError:
+#             todb(article,'NULL','NULL')
+
+
 
 
 articles = takeid()
 for article in articles:
     parse_links(article[0])
+    time.sleep(0)
 
