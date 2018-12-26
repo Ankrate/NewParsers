@@ -13,9 +13,9 @@ import re
 
 
 def takeid():
-    connection = sqlite3.connect("/home/user500/allegro_photo.db")
+    connection = sqlite3.connect("/home/user500/duc-ph.db")
     cur = connection.cursor()
-    todbZapros = ("SELECT article FROM articles_of_parts")
+    todbZapros = ("SELECT article FROM duc_ph")
     cur.execute(todbZapros)
     rows = cur.fetchall()
     connection.commit()
@@ -23,7 +23,7 @@ def takeid():
 
 
 def todb(article,img,description):
-    connection = sqlite3.connect("/home/user500/allegro_51.db")
+    connection = sqlite3.connect("/home/user500/allegro_duc.db")
     cur = connection.cursor()
     todbValue = (article,img,description)
     query = ("INSERT INTO main(article,img,description) VALUES (?,?,?)")
@@ -53,7 +53,7 @@ def todb(article,img,description):
 
 def parse_links(article):
     try:
-        html = urlopen("https://allegro.pl/listing?string=" + article)
+        html = urlopen("https://allegro.pl/kategoria/motoryzacja?string=" + article)
         soup = BeautifulSoup(html, "lxml")
         try:
             checkCount = soup.find('section', 'cb528e8')
