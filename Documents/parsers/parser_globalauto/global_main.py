@@ -1,11 +1,25 @@
 # -*- coding: UTF-8 -*-
-import time
-
 from urllib.request import urlopen
-from urllib.parse import urlparse
 from bs4 import BeautifulSoup
+import sqlite3
+import urllib
+import requests
+import socks
+import socket
+import time
+import re
 
-import fun
 
-urls = 'http://www.dvsavto.ru/catalog/'
-fun.parse_link(urls)
+
+def parser(url):
+    html = urlopen(url)
+    soup = BeautifulSoup(html, "lxml")
+    menu = soup.findAll('div', {'class':'prodtttuct'})
+    g = menu.find('a')
+    print(menu)
+
+
+
+
+
+parser('http://www.dvsavto.ru/catalog/')

@@ -53,7 +53,7 @@ def todb(article,img,description):
 
 def parse_links(article):
     try:
-        html = urlopen("https://allegro.pl/kategoria/motoryzacja?string=" + article)
+        html = urlopen("https://www.avito.ru/moskva?s_trg=3&q=" + article)
         soup = BeautifulSoup(html, "lxml")
         try:
             checkCount = soup.find('section', 'cb528e8')
@@ -82,7 +82,11 @@ def parse_page(article,pageUrl):
             html = urlopen(pageUrl)
             soup = BeautifulSoup(html, "lxml")
             photoLink = soup.find('meta',{'itemprop':'image'})
-            description = str(soup.find('div', 'description'))
+            if description = str(soup.find(text='ducato'):
+                description = str(soup.find('div', 'description'))
+            else:
+
+
             img = photoLink['content']
             todb(article,img,description)
         except:

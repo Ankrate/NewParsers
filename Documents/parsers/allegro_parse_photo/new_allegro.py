@@ -82,7 +82,9 @@ def parse_page(article,pageUrl):
             html = urlopen(pageUrl)
             soup = BeautifulSoup(html, "lxml")
             photoLink = soup.find('meta',{'itemprop':'image'})
-            description = str(soup.find('div', 'description'))
+            if
+                description = str(soup.find(text='ducato')
+                description = str(soup.find('div', 'description'))
             img = photoLink['content']
             todb(article,img,description)
         except:
